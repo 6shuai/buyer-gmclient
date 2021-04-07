@@ -1,0 +1,381 @@
+@import './variables.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+@import './btn.scss';
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.padding-content {
+  padding: 4px 0;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+.fr {
+  float: right;
+}
+
+.fl {
+  float: left;
+}
+
+.pr-5 {
+  padding-right: 5px;
+}
+
+.pl-5 {
+  padding-left: 5px;
+}
+
+.block {
+  display: block;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.inlineBlock {
+  display: block;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+aside {
+  background: #eef1f6;
+  padding: 8px 24px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  display: block;
+  line-height: 32px;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  color: #2c3e50;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  a {
+    color: #337ab7;
+    cursor: pointer;
+
+    &:hover {
+      color: rgb(32, 160, 255);
+    }
+  }
+}
+
+//main-container全局样式
+.app-container {
+  padding: 20px;
+}
+
+.components-container {
+  margin: 30px 50px;
+  position: relative;
+}
+
+.pagination-container {
+  margin-top: 30px;
+}
+
+.text-center {
+  text-align: center
+}
+
+.sub-navbar {
+  height: 50px;
+  line-height: 50px;
+  position: relative;
+  width: 100%;
+  text-align: right;
+  padding-right: 20px;
+  transition: 600ms ease position;
+  background: linear-gradient(90deg, rgba(32, 182, 249, 1) 0%, rgba(32, 182, 249, 1) 0%, rgba(33, 120, 241, 1) 100%, rgba(33, 120, 241, 1) 100%);
+
+  .subtitle {
+    font-size: 20px;
+    color: #fff;
+  }
+
+  &.draft {
+    background: #d0d0d0;
+  }
+
+  &.deleted {
+    background: #d0d0d0;
+  }
+}
+
+.link-type,
+.link-type:focus {
+  color: #337ab7;
+  cursor: pointer;
+
+  &:hover {
+    color: rgb(32, 160, 255);
+  }
+}
+
+.filter-container {
+  padding-bottom: 10px;
+
+  .filter-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 10px;
+  }
+}
+
+//refine vue-multiselect plugin
+.multiselect {
+  line-height: 16px;
+}
+
+.multiselect--active {
+  z-index: 1000 !important;
+}
+
+
+
+li{
+  list-style: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+// main-container global css
+.app-container {
+  padding: 20px;
+}
+
+.top-operation-wrap{
+  padding-bottom: 10px;
+  .el-input{
+    width: 200px;
+    display: inline-block;
+  }
+}
+
+.app-main{
+  .app-main-wrap{
+    margin: 18px 24px;
+  }
+  .template-card{
+    margin: 10px;
+  }
+  .detail-wrap{
+    min-width: 1200px;
+  }
+} 
+
+.el-pagination{
+  text-align: right;
+}
+
+.overflow{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-hover:hover{
+  color: $menuActiveText !important;
+}
+
+.el-page-header__left:hover{
+  color: $menuActiveText;
+}
+
+.detail-header-wrap{
+  overflow: hidden;
+  .el-page-header__left:hover{
+      color: $menuActiveText;
+  }
+  .el-page-header{
+      float: left;
+      width: 100px;
+  }
+  .header-right{
+      float: right;
+      width: 380px;
+      text-align: right;
+      span{
+          cursor: pointer;
+          &:hover{
+              color: $menuActiveText;
+              & i{
+                  color: $menuActiveText;
+              }
+          }
+          i{
+              margin-right: 2px;
+              color: #999;
+          }
+      }
+  }
+  .title{
+      margin: 0 300px;
+      text-align: center;
+  }
+}
+
+// margin-top
+.mt10{
+  margin-top: 10px;
+}
+.mt20{
+  margin-top: 20px;
+}
+.mt30{
+  margin-top: 30px;
+}
+
+// margin-bottom
+.mb10{
+  margin-bottom: 10px;
+}
+.mb20{
+  margin-bottom: 20px;
+}
+.mb30{
+  margin-bottom: 30px;
+}
+
+// margin-left
+.ml10{
+  margin-left: 10px;
+}
+.ml20{
+  margin-left: 20px;
+}
+.ml30{
+  margin-left: 30px;
+}
+
+// margin-right
+.mr10{
+  margin-right: 10px;
+}
+.mr20{
+  margin-right: 20px;
+}
+.mr30{
+  margin-right: 30px;
+}
+
+.w220.el-input{
+  width: 220px;
+}
+
+.w200.el-input{
+  width: 200px;
+}
+
+.search-list-wrap{
+  .search-list{
+      padding-bottom: 10px;
+      .title{
+          font-size: 14px;
+          color: #515a6e;
+          line-height: 30px;
+      }
+      .region-select{
+          width: 128px;
+          margin-right: 10px;
+      }
+      .focus{
+          color: #8484FF;
+          border-color: #dadaff;
+          background-color: #f3f3ff;
+      }
+      .el-button{
+          margin: 0 10px 10px 0;
+      }
+  }
+}
+
+.el-drawer__header>:first-child{
+  outline: none;
+}
+
+.no-data{
+  line-height: 40px !important;
+  text-align: center;
+}
+
+.el-image{
+  text-align: center;
+}
+.el-image__placeholder::before{
+  content: '加载中...';
+  font-size: 12px;
+  color: #999;
+  line-height: 60px;
+  text-align: center;
+}
