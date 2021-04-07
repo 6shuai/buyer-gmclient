@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref, onMounted } from 'vue'
+import { reactive, toRefs, ref, onMounted, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { bannerCreate, bannerDetail } from '@/api/banner'
@@ -110,6 +110,7 @@ export default {
 		const router = useRouter()
 		const route = useRoute()
 		const addBannerForm = ref(null)
+		const { proxy } = getCurrentInstance()
 
 		onMounted(() => {
 			if (route.params.id) {
@@ -127,8 +128,8 @@ export default {
 		}
 
 		//上传banner成功
-		const uploadBannerSuccess = () => {
-			console.log('上传成功~')
+		const uploadBannerSuccess = (url) => {
+			state.addParams.image = url;
 		}
 
 		//添加banner
@@ -148,8 +149,10 @@ export default {
 					state.btnLoading = true
 					bannerCreate(state.addParams).then(res => {
 						state.btnLoading = false;
-						ElMessage.success('操作成功~')
-						router.push('/material/banner')
+						if(res.code == proxy.$successCode){
+							ElMessage.success('操作成功~')
+							router.push('/material/banner')
+						}
 					})
 				}
 			})
@@ -160,8 +163,7 @@ export default {
 			btnLoading: false,
 			addBannerForm,
 			addParams: {
-				type: 1,
-				image: 'http://123.206.83.233:80/screenshot/2021/03/18/a1bd945c-b55c-4394-b0f3-7782f78ccb66.jpg',
+				type: 1
 			},
 			addRules: {
 				displayName: [

@@ -55,7 +55,8 @@ import { expressCompanyList, orderExpress } from '@/api/order'
 import { ElMessage } from 'element-plus'
 
 export default {
-    setup(props) {
+    emits: ['deliverGoodsSuccess'],
+    setup(props, { emit }) {
         const expressForm = ref(null)
         const { proxy } = getCurrentInstance()
         const showDialog = (id) => {
@@ -81,6 +82,7 @@ export default {
                         if(res.code === proxy.$successCode){
                             ElMessage.success('操作成功~')
                             state.deliverGoodsDialog = false;
+                            emit('deliverGoodsSuccess')
                         }
                     })
                 }

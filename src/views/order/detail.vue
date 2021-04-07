@@ -53,7 +53,7 @@
 		</el-card>
         
         <!-- 发货 -->
-		<deliver-goods ref="deliverGoods"></deliver-goods>
+		<deliver-goods ref="deliverGoods" @deliverGoodsSuccess="resData.status=3"></deliver-goods>
 
 	</div>
 </template>

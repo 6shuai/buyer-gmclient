@@ -98,7 +98,7 @@
 		</el-card>
 
 		<!-- 发货 -->
-		<deliver-goods ref="deliverGoods"></deliver-goods>
+		<deliver-goods ref="deliverGoods" @deliverGoodsSuccess="init"></deliver-goods>
 	</div>
 </template>
 
@@ -178,7 +178,8 @@ export default {
 			handleCurrentChange,
 			deliverGoods,
 			search,
-			datePicker: []
+			datePicker: [],
+			init
 		})
 
 		return toRefs(state)
