@@ -71,7 +71,7 @@
 			append-to-body
 			v-model="dialogVisible"
 		>
-			<div class="panic-buy-wrap mt10" v-if="panicBuyList.length">
+			<!-- <div class="panic-buy-wrap mt10" v-if="panicBuyList.length">
 				<el-card
 					class="panic-buy-item banner-select-item"
 					v-for="item in panicBuyList"
@@ -80,7 +80,8 @@
 					<el-button class="select-btn" type="primary" plain>选择</el-button>
 					<panic-buy-list :hideDeleteBtn="true"></panic-buy-list>
 				</el-card>
-			</div>
+			</div> -->
+			<el-empty description="暂无数据"></el-empty>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="dialogVisible = false">取 消</el-button>
@@ -163,7 +164,7 @@ export default {
 			btnLoading: false,
 			addBannerForm,
 			addParams: {
-				type: 1
+				jumpType: 1
 			},
 			addRules: {
 				displayName: [
@@ -177,7 +178,7 @@ export default {
 				]
 			},
 			dialogVisible: false,
-			panicBuyList: [{}, {}], //抢购列表
+			panicBuyList: [], //抢购列表
 			uploadBannerSuccess,
 			handleAddBanner,
 		})

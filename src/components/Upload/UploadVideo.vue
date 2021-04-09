@@ -1,6 +1,7 @@
 <template>
 	<div class="upload-video-wrap">
 		<el-upload
+			v-if="!videoUrl"
 			v-loading="videoFlag"
 			element-loading-text="视频上传中"
 			element-loading-spinner="el-icon-loading"
@@ -18,6 +19,33 @@
 				class="el-icon-plus avatar-uploader-icon"
 			></i>
 		</el-upload>
+		<div 
+            v-if="videoUrl !=''"
+            v-loading="videoFlag"
+            element-loading-text="视频上传中"
+            element-loading-spinner="el-icon-loading"
+            style="height: 456px"
+        >
+            <el-upload 
+                accept="video/*"
+                :data='uploadData'
+                :action="action" 
+                :show-file-list="false" 
+                :on-success="handleVideoSuccess" 
+                :before-upload="beforeUploadVideo" 
+                :on-progress="uploadVideoProcess"
+            >
+                <el-button type="primary" size="small">重新上传视频</el-button>
+            </el-upload>
+            <video 
+                v-if="videoUrl !='' && videoFlag == false" 
+                :src="videoUrl" 
+                class="video" 
+                id="videofile"
+                controls="controls">
+                您的浏览器不支持视频播放
+            </video>
+        </div>
 	</div>
 </template>
 <script>
@@ -78,6 +106,8 @@ export default {
 
 			let videoElement = document.createElement('video')
 			videoElement.src = res.obj.path
+			videoElement.setAttribute('crossOrigin', 'anonymous')
+			videoElement.currentTime = 1;
 			// 当指定的音频/视频的元数据已加载时，会发生 loadedmetadata 事件。 元数据包括：时长、尺寸（仅视频）以及文本轨道。
 			let _this = this
 			videoElement.addEventListener('loadedmetadata', function (_event) {
@@ -93,7 +123,10 @@ export default {
 					contentPath: _this.videoUrl,
 				}
 				_this.getBigectURL(videoElement, width, height)
-				_this.$emit('uploadVideo', res.obj.path)
+				_this.$emit('uploadVideo', { 
+					url: res.obj.path,
+					duration: parseInt(duration)
+				})
 			})
 		},
 	},

@@ -86,16 +86,17 @@ export const constantRoutes = [
 		],
 	},
 
+
 	{
 		path: '/',
 		component: Layout,
 		children: [
-			{
-				path: 'activity',
-				component: () => import('@/views/activity/index'),
-				name: 'activity',
-				meta: { title: '活动管理', icon: 'guide' },
-			},
+			// {
+			// 	path: '/activity',
+			// 	component: () => import('@/views/activity/index'),
+			// 	name: 'activity',
+			// 	meta: { title: '活动管理', icon: 'guide' },
+			// },
 			{
 				path: '/activity/panicBuy/:id',
 				component: () => import('@/views/activity/panicBuy/panicBuy'),
@@ -111,7 +112,7 @@ export const constantRoutes = [
 				hidden: true
 			},
 			{
-				path: '/activity/panicBuy/edit/:goodsId',
+				path: '/activity/panicBuy/:id/edit/:goodsId',
 				component: () => import('@/views/activity/panicBuy/createPanicBuy'),
 				name: 'activity--auctionEdit',
 				meta: { title: '编辑抢购' },
@@ -127,18 +128,20 @@ export const constantRoutes = [
 		],
 	},
 
+
+
 	{
 		path: '/',
 		component: Layout,
 		children: [
+			// {
+			// 	path: '/order',
+			// 	component: () => import('@/views/order/index'),
+			// 	name: 'order',
+			// 	meta: { title: '订单管理', icon: 'shopping' },
+			// },
 			{
-				path: 'order',
-				component: () => import('@/views/order/index'),
-				name: 'order',
-				meta: { title: '订单管理', icon: 'shopping' },
-			},
-			{
-				path: 'order/detail/:id',
+				path: '/order/detail/:id',
 				component: () => import('@/views/order/detail'),
 				name: 'order--detail',
 				meta: { title: '订单详情' },
@@ -148,17 +151,15 @@ export const constantRoutes = [
 	},
 
 	{
-		path: '/material',
+		path: '/',
 		component: Layout,
-		meta: { title: '物料管理', icon: 'component' },
-		name: 'material',
 		children: [
-			{
-				path: '/material/goods',
-				component: () => import('@/views/material/goods/index'),
-				name: 'goods',
-				meta: { title: '商品管理' }
-			},
+			// {
+			// 	path: '/material/goods',
+			// 	component: () => import('@/views/material/goods/index'),
+			// 	name: 'goods',
+			// 	meta: { title: '商品管理' }
+			// },
 			{
 				path: '/material/goods/add',
 				component: () => import('@/views/material/goods/create'),
@@ -173,12 +174,12 @@ export const constantRoutes = [
 				meta: { title: '编辑商品' },
 				hidden: true
 			},
-			{
-				path: '/material/banner',
-				component: () => import('@/views/material/banner/index'),
-				name: 'banner',
-				meta: { title: 'Banner管理' },
-			},
+			// {
+			// 	path: '/material/banner',
+			// 	component: () => import('@/views/material/banner/index'),
+			// 	name: 'banner',
+			// 	meta: { title: 'Banner管理' },
+			// },
 			{
 				path: '/material/banner/add',
 				component: () => import('@/views/material/banner/create'),
@@ -193,29 +194,29 @@ export const constantRoutes = [
 				meta: { title: '编辑Banner' },
 				hidden: true
 			},
-			{
-				path: '/material/location',
-				component: () => import('@/views/material/location/index'),
-				name: 'location',
-				meta: { title: '领取地址管理' },
-			},
+			// {
+			// 	path: '/material/location',
+			// 	component: () => import('@/views/material/location/index'),
+			// 	name: 'Address',
+			// 	meta: { title: '领取地址管理' },
+			// },
 		],
 	},
 
-	{
-		path: '/member',
-		component: Layout,
-		meta: { title: '用户管理', icon: 'user' },
-		name: 'member',
-		children: [
-			{
-				path: '/member',
-				component: () => import('@/views/member/index'),
-				name: 'member',
-				meta: { title: '用户管理' }
-			}
-		]
-	}
+	// {
+	// 	path: '/member',
+	// 	component: Layout,
+	// 	meta: { title: '用户管理', icon: 'user' },
+	// 	name: 'member',
+	// 	children: [
+	// 		{
+	// 			path: '/member',
+	// 			component: () => import('@/views/member/index'),
+	// 			name: 'member',
+	// 			meta: { title: '用户管理' }
+	// 		}
+	// 	]
+	// }
 
 ]
 
@@ -227,12 +228,11 @@ export const asyncRoutes = [
 
 ]
 
-
+console.log(constantRoutes)
 const router = createRouter({
 	// history: createWebHistory(), // require service support
 	history: createWebHashHistory(),
 	scrollBehavior: () => ({ top: 0 }),
 	routes: constantRoutes,
 })
-console.log(router)
 export default router

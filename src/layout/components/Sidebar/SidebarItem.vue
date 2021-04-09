@@ -7,8 +7,8 @@
 				!item.alwaysShow
 			"
 		>
-			<app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-				<el-menu-item :index="resolvePath(onlyOneChild.path)">
+			<app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, 'path')">
+				<el-menu-item :index="resolvePath(onlyOneChild.name, 'name')">
 					<item
 						:icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
 						:title="onlyOneChild.meta.title"
@@ -20,7 +20,7 @@
 		<el-submenu
 			v-else
 			ref="subMenu"
-			:index="resolvePath(item.path)"
+			:index="resolvePath(item.name, 'name')"
 			popper-append-to-body
 		>
 			<template #title>
@@ -35,7 +35,7 @@
 				:key="child.path"
 				:is-nest="true"
 				:item="child"
-				:base-path="resolvePath(child.path)"
+				:base-path="resolvePath(child.path, 'path')"
 				class="nest-menu"
 			/>
 		</el-submenu>
@@ -95,15 +95,19 @@ export default {
 			}
 			return false
 		},
-		resolvePath(routePath) {
-			if (isExternal(routePath)) {
+		resolvePath(routePath, type) {
+			if(type === 'path'){
+				if (isExternal(routePath)) {
+				return routePath
+				}
+				if (isExternal(this.basePath)) {
+				return this.basePath
+				}
+				return path.resolve(this.basePath, routePath)
+			}else{
 				return routePath
 			}
-			if (isExternal(this.basePath)) {
-				return this.basePath
-			}
-			return path.resolve(this.basePath, routePath)
-		},
+		}
 	},
 }
 </script>

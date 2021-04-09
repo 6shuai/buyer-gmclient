@@ -23,7 +23,7 @@
 							></el-input>
 						</el-form-item>
 						<el-form-item label="销售属性" prop="goodsSkus">
-							<el-button icon="el-icon-plus" @click="handleAddSkusBtn"
+							<el-button icon="el-icon-plus" @click="handleAddSkusBtn()"
 								>添加属性</el-button
 							>
 							<el-table
@@ -35,7 +35,7 @@
 								<el-table-column
 									prop="description"
 									label="属性"
-									:min-width="200"
+									:min-width="150"
 								>
 								</el-table-column>
 								<el-table-column prop="cover" label="商品图片" :min-width="100">
@@ -44,27 +44,30 @@
 											class="goods-attribute-image"
 											fit="contain"
 											:src="scope.row.cover"
+											:preview-src-list="[scope.row.cover]"
 										></el-image>
 									</template>
 								</el-table-column>
 								<el-table-column label="视频" :min-width="200">
 									<template #default="scope">
-										<div
-											class="showUploadVideo"
-											@click="handleShowUploadVideo(scope.row.id, scope.$index)"
-										>
-											<i class="el-icon-plus"></i>上传
-										</div>
-										<ul class="video-list">
+										<ul class="video-list" v-if="scope.row.goodsVideoRelationships">
 											<li
-												v-for="(item, index) in scope.row.goodsVideo"
+												class="showUploadVideo"
+												@click="handleShowUploadVideo(scope.$index)"
+											>
+												<i class="el-icon-plus"></i>上传
+											</li>
+											<li
+												v-for="(item, index) in scope.row.goodsVideoRelationships"
 												:key="index"
+												@click="handleShowUploadVideo(scope.$index, item.goodsVideo, index)"
 											>
 												<el-image
 													class="goods-video-cover"
-													fit="contain"
-													:src="item.image"
+													fit="cover"
+													:src="item.goodsVideo.image"
 												></el-image>
+												<p class="title overflow">{{ item.goodsVideo.displayName }}</p>
 											</li>
 										</ul>
 									</template>
@@ -76,37 +79,9 @@
 												href="javascript:;"
 												type="primary"
 												class="mr20"
-												@click="handleAddSkusBtn(scope.row, scope.$index)"
+												@click="handleAddSkusBtn(scope.row, scope.$index, true)"
 												>编辑</el-link
 											>
-											<el-popover
-												placement="top"
-												:ref="scope.row.id"
-												width="200"
-											>
-												<p>此操作将删除此数据, 是否继续?</p>
-												<div style="text-align: right; margin: 0">
-													<el-button
-														size="mini"
-														type="text"
-														@click="$refs[scope.row.id].doClose()"
-														>取消</el-button
-													>
-													<el-button
-														type="primary"
-														size="mini"
-														@click="handleDelete(scope.$index)"
-														>确定</el-button
-													>
-												</div>
-												<template #reference>
-													<el-link 
-														href="javascript:;" 
-														type="danger"
-														>删除</el-link
-													>
-												</template>
-											</el-popover>
 										</p>
 									</template>
 								</el-table-column>
@@ -132,7 +107,7 @@
 
 		<!-- 添加视频 -->
 		<el-dialog
-			title="添加视频"
+			:title="videoParams.edit ? '编辑视频' : '添加视频'"
 			width="800px"
 			:close-on-click-modal="false"
 			append-to-body
@@ -193,14 +168,17 @@ export default {
 
 		const methods = {
 			//添加属性
-			handleAddSkusBtn(data, index) {
-				skus.value.showDialog(data, index)
+			handleAddSkusBtn(data, index, isEdit) {
+				skus.value.showDialog(data, index, isEdit)
 			},
 
 			//上传视频成功
-			uploadVideoSuccess(url) {
+			uploadVideoSuccess(videoInfo) {
 				console.log('上传成功~')
-				state.videoParams.url = url
+				state.videoParams = {
+					...state.videoParams,
+					...videoInfo
+				}
 			},
 
 			//上传视频封面成功
@@ -225,8 +203,8 @@ export default {
 
 			//添加或修改属性
 			handleAddSkus(data) {
-				if (data.index) {
-					state.addParams.goodsSkus[index] = data
+				if (data.isEdit) {
+					state.addParams.goodsSkus[data.index] = data
 				} else {
 					state.addParams.goodsSkus.push(data)
 				}
@@ -236,6 +214,7 @@ export default {
 		//删除商品属性
 		const handleDelete = index => {
 			state.addParams.goodsSkus.splice(index, 1)
+			state.visible = false
 		}
 
 		//商品详情
@@ -248,9 +227,19 @@ export default {
 		}
 
 		//显示上传视频窗口
-		const handleShowUploadVideo = (id, index) => {
+		const handleShowUploadVideo = (skusIndex, data, index) => {
 			// state.videoParams.id = id
-			state.videoParams.index = index
+			state.videoParams = {
+				skusIndex
+			}
+			if(data) {
+				state.videoParams = {
+					...data,
+					skusIndex,
+					index,
+					edit: true
+				}
+			}
 			state.addVideoDialog = true
 		}
 
@@ -262,16 +251,33 @@ export default {
 			} else if (!state.videoParams.url) {
 				ElMessage.warning('请上传视频~')
 				return
+			} else if (!state.videoParams.image) {
+				ElMessage.warning('视频截图上传中, 请稍后~')
+				return
 			}
-			if (!state.addParams.goodsVideo) state.addParams.goodsVideo = []
-			state.addParams.goodsVideo[index].push(state.videoParams)
+			let { skusIndex, index } = state.videoParams
+			if(!state.addParams.goodsSkus[skusIndex].goodsVideoRelationships) state.addParams.goodsSkus[skusIndex].goodsVideoRelationships = []
+			if (!state.addParams.goodsSkus[skusIndex].goodsVideoRelationships.goodsVideo) state.addParams.goodsSkus[skusIndex].goodsVideoRelationships.goodsVideo = []
+
+			if(state.videoParams.edit){
+				state.addParams.goodsSkus[skusIndex].goodsVideoRelationships[index].goodsVideo = state.videoParams
+			}else{
+				state.addParams.goodsSkus[skusIndex].goodsVideoRelationships.push({
+					goodsVideo: {
+						...state.videoParams
+					}
+				})
+			}
+			state.addVideoDialog = false
 		}
 
 		const state = reactive({
 			addParams: {
 				goodsSkus: [], //商品规格属性
 			},
-			videoParams: {}, //添加视频
+			videoParams: {
+				url: 'https://quiz.xfengjing.com/video/2021/04/07/dc23b770-f0ff-4697-ba51-cc4be3595367.mp4'
+			}, //添加视频
 			addRules: {
 				displayName: [
 					{ required: true, message: '请输入属性名称', trigger: 'blur' },
@@ -284,6 +290,7 @@ export default {
 			btnLoading: false,
 			dialogVisible: false,
 			addVideoDialog: false,
+			visible: false,
 			skus, //添加商品属性 ref
 			addGoodsForm, //添加商品 ref
 			...methods,
@@ -336,10 +343,22 @@ export default {
 
 	.video-list {
 		display: flex;
+		flex-wrap: wrap;
+
+		li{
+			margin: 0 10px 10px 0;
+			cursor: pointer;
+		}
+
 		.goods-video-cover {
 			width: 80px;
-			height: 80px;
-			margin-right: 10px;
+			height: 50px;
+		}
+
+		p.title{
+			text-align: center;
+			font-size: 12px;
+			color: #999;
 		}
 	}
 }

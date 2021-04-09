@@ -1,5 +1,6 @@
 import { userLogin, userLogout } from "@/api/user";
 import { getToken, setToken, removeToken } from "@/utils/auth";
+import { getAuthMenu } from "@/api/user";
 
 const state = {
 	token: getToken(),
@@ -58,6 +59,18 @@ const actions = {
 			resolve();
 		});
 	},
+
+	getMenuList({ commit, state }) {
+		return new Promise((resolve, reject) => {
+			getAuthMenu()
+			.then(response => {
+			  resolve(response)
+			})
+			.catch(error => {
+			  reject(error)
+			})
+		})
+	  },
 };
 
 export default {

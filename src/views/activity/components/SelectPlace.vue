@@ -51,6 +51,7 @@
 
 <script>
 import { reactive, toRefs, getCurrentInstance } from 'vue'
+import { useStore } from 'vuex'
 import { ElMessage } from 'element-plus'
 import { activityAddressList, activityAddressCreatePick } from '@/api/activity'
 
@@ -58,6 +59,7 @@ export default {
 	emits: ['selectedPlaceData'],
 	setup(props, { emit }) {
 		const { proxy } = getCurrentInstance()
+		const store = useStore()
 
 		//select 商家领取地址列表
 		const showDialog = data => {
@@ -105,6 +107,10 @@ export default {
 		}
 
 		const createPick = (data) => {
+			if(!data.length){
+				ElMessage.warning('未选择商家~')
+				return
+			}
 			state.btnLoading = true
 			let arr = []
 			data.forEach(item => {
@@ -114,7 +120,7 @@ export default {
 					deliverType: 1
 				})
 			});
-			activityAddressCreatePick(data).then(res => {
+			activityAddressCreatePick(arr).then(res => {
 				state.btnLoading = false
 				if(res.code === proxy.$successCode){
 					data.forEach((item, index) => {

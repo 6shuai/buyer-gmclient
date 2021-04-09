@@ -4,6 +4,7 @@
         <div v-if="!isArray">   
             <el-upload
                 v-loading="uploadLoading"
+                accept="image/*"
                 :data='uploadData'
                 element-loading-text="图片上传中"
                 element-loading-spinner="el-icon-loading"
@@ -57,6 +58,7 @@
                 >
                     <el-upload
                         multiple
+                        accept="image/*"
                         :action="action"
                         :data='uploadData'
                         :show-file-list="false"

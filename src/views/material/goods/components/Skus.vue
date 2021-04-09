@@ -52,10 +52,13 @@ export default {
         const addSkusForm = ref(null);
 
         //显示添加商品规格
-        const showDialog = (data, index) => {
+        const showDialog = (data, index, isEdit) => {
             if(data){
-                state.addParams = data
-                state.addParams.index = index
+                state.addParams = {
+                    ...data,
+                    index, 
+                    isEdit
+                }
             }
             state.dialogVisible = true;
         }

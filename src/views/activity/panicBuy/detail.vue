@@ -7,42 +7,47 @@
 				content="抢购详情"
 			></el-page-header>
 			
-            <div class="info">
-                <div class="title">madongdong</div>
+            <div class="info" v-loading="loading">
+                <div class="title">{{ resData.goodsName }}</div>
                 <div class="goods">
 					<div class="goods-img">
-						<el-image fit="cover" src=""></el-image>
+						<el-image fit="cover" :src="resData.cover"></el-image>
 					</div>
 					<div class="goods-desc">
-						<div class="goods-name">madongdong</div>
+						<div class="goods-name">{{ resData.goodsName }}</div>
 						<ul class="item">
 							<li>
 								<span class="label">规格</span>
-								<span>Nintendo Switch 国行灰色</span>
+								<span>{{ resData.description }}</span>
 							</li>
 							<li>
 								<span class="label">活动时间</span>
-								<span>2020年11月11日 20:30</span>
+								<span>{{ resData.beginTime }}</span>
 							</li>
 							<li>
 								<span class="label">起拍价格</span>
-								<span>￥2,999</span>
+								<span>{{ resData.marketValue }}</span>
 							</li>
 							<li>
 								<span class="label">数量</span>
-								<span>41</span>
+								<span>{{ resData.inventory }}</span>
 							</li>
 						</ul>
 						<ul class="item">
 							<li>
 								<span class="label">活动商场</span>
-								<span>北京 朝阳大悦城等2个商场</span>
+								<span v-for="item in resData.auctionPickUpAddresses" :key="item.id">{{ item.placeName }}</span>
 							</li>
 						</ul>
 					</div>
 					<div class="goods-operation">
 						<div class="switch">
-							<el-switch></el-switch>
+							<el-switch
+								:active-value="1"
+								:inactive-value="2"
+								v-model="resData.online"
+								@click.stop="handleChangeOnline(resData.id, resData.online)"
+							></el-switch>
 						</div>
 						<el-button icon="el-icon-edit" type="primary" @click="handleEditClick">编辑</el-button>
 					</div>
@@ -55,10 +60,39 @@
 					<el-tab-pane label="活动数据" name="data"></el-tab-pane>
 				</el-tabs>
 
+				<!-- 机器人管理 -->
 				<div class="robot-wrap" v-if="activeName=='robot'">
-					<el-button type="primary">查看数据</el-button>
+					<div class="robot-data-wrap" v-loading="robotDataLoading">
+						<el-table
+							class="place-list"
+							:data="robotData"
+							stripe
+							:show-header="false"
+						>
+							<el-table-column label=" " width="70">
+								<template #default="scope">
+									<el-image class="robot-avatar" :src="scope.row.avatar"></el-image>
+								</template>
+							</el-table-column>
+							<el-table-column prop="nickname" label=" " :min-width="200">
+							</el-table-column>
+							<el-table-column prop="price" label=" " width="150"> </el-table-column>
+						</el-table>
+
+						<el-pagination
+							class="mt20"
+							background
+							:current-page.sync="totalPage.pageNo"
+							:page-size="totalPage.pageSize"
+							layout="total, prev, pager, next"
+							@current-change="handleCurrentChange"
+							:total="totalCount"
+						>
+						</el-pagination>
+					</div>
 				</div>
 
+				<!-- 活动数据 -->
 				<div class="activity-data" v-if="activeName=='data'">
 					<h3>概览</h3>
 					<ul class="overview">
@@ -111,26 +145,98 @@
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
-import { ElAlert } from 'element-plus'
+import { reactive, toRefs, onMounted, getCurrentInstance } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ElAlert, ElMessage } from 'element-plus'
+import { activityPanicBuyUpdateState, activityPanicBuyDetail, activityPanicBuyRobotList } from '@/api/activity'
 
 export default {
 	setup() {
+		const route = useRoute()
+		const router = useRouter()
+		const { proxy } = getCurrentInstance()
+		const routeParams = route.params.id
+		const [ id, goodsId ] = [routeParams.split('-')[0], routeParams.split('-')[1]]
+
+		onMounted(() => {
+			getDetail()	
+			getRobotList()
+		})
+
 		const handleTabClick = () => {
 			console.log(state.activeName);
 		}
 
+		//查询抢购详情
+		const getDetail = () => {
+			state.loading = true
+			activityPanicBuyDetail(goodsId).then(res => {
+				if(res.code === proxy.$successCode){
+					state.resData = res.obj
+					if(state.resData.status == 3 || state.resData.status == 4){
+						state.resData.online = 1
+					}else{
+						state.resData.online = 2
+					}
+					state.loading = false
+				}
+			})
+		}
+
+		//机器人列表
+		const getRobotList = () => {
+			state.totalPage.auctionId = goodsId
+			state.robotDataLoading = true
+			activityPanicBuyRobotList(state.totalPage).then(res => {
+				state.robotDataLoading = false
+				if (res.code === proxy.$successCode) {
+					let { list, totalRecords } = res.obj
+					state.robotData = list
+					state.totalCount = totalRecords
+				}
+			})
+		}
+
+		//机器人列表  分页
+		const handleCurrentChange = (page) => {
+			state.totalPage.pageSize = page
+			getRobotList()
+		}
+
+		//修改抢购上下线
+		const handleChangeOnline = (id, online) => {
+			let data = {
+				id,
+				online,
+			}
+			activityPanicBuyUpdateState(data).then(res => {
+				if(res.code === proxy.$successCode){
+					ElMessage.success('操作成功~')
+				}
+			})
+		}
+
+
 		//点击编辑按钮
 		const handleEditClick = () => {
-			ElAlert('这是一段内容', '信息名称', {
-				confirmButtonText: '确定'
-			});
+			router.push(`/activity/panicBuy/${id}/edit/${goodsId}`)
 		}
 
 		const state = reactive({
+			loading: false,
+			resData: {},
 			activeName: 'robot',
+			robotData: [],
+			totalCount: 0,
+			robotDataLoading: false,
+			totalPage: {
+				pageNo: 1,
+				pageSize: 40
+			},
 			handleTabClick,
-			handleEditClick
+			handleEditClick,
+			handleChangeOnline,
+			handleCurrentChange
 		})
 
 		return toRefs(state)
@@ -191,6 +297,13 @@ export default {
 				}
 			}
 
+		}
+
+		.robot-avatar{
+			width: 50px;
+			height: 50px;
+			border: 1px solid #e5e5e5;
+			border-radius: 50%;
 		}
 
 		.data-wrap{

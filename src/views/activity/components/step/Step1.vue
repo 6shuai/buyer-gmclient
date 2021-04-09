@@ -64,7 +64,7 @@
                     v-model="params.priceDeclineFrequency"
                     placeholder="请输入多少时间下降一次价格"
                 ></el-input-number>
-                <span>秒</span>
+                <span class="units">秒</span>
             </el-form-item>
             <el-form-item label="最低抢购价格" prop="floorPrice">
                 <el-input-number
@@ -144,6 +144,7 @@ export default {
         })
 
         watch(() => props.panicBuyData, (nval, oval) => {
+            console.log('-------------------------------------------------------', nval)
             state.params = nval
         })
         

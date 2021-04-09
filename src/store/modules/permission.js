@@ -1,8 +1,15 @@
 import { asyncRoutes, constantRoutes } from '@/router'
 import router from '@/router'
+import Layout from '@/layout'
 
 const moduleMap = {
 	'Home': 'home/index',
+  'Activity': () => import('@/views/activity/index'),
+  'Order': () => import('@/views/order/index'),
+  'Member': () => import('@/views/member/index'),
+  'Goods': () => import('@/views/material/goods/index'),
+  'Banner':() => import('@/views/material/banner/index'),
+  'Address': () => import('@/views/material/address/index')
 }
 
 /**
@@ -57,7 +64,21 @@ const mutations = {
 
 const actions = {
   generateRoutes({ commit }, asyncRouter) {
-    commit('SET_ROUTES', asyncRouter)
+    return new Promise(resolve => {
+      let accessedRoutes = filterAsyncRouter(asyncRouter)
+      commit('SET_ROUTES', accessedRoutes)
+      resolve(accessedRoutes)
+    })
+  },
+
+  addRoutes({ commit }, accessRoutes) {
+    // 添加动态路由，同时保存移除函数，将来如果需要重置路由可以用到它们
+    const removeRoutes = []
+    accessRoutes.forEach(route => {
+      const removeRoute = router.addRoute(route)
+      removeRoutes.push(removeRoute)
+    })
+    commit('SET_REMOVE_ROUTES', removeRoutes)
   },
 }
 
@@ -75,14 +96,14 @@ export const filterAsyncRouter = (data) => {
         let oneRouter = {
             path: one.route, 
             name: one.moduleName, 
-        children: formattedChildren || [], 
-        // 路由懒加载
-        component: one.parentID === 1 ? Layout : (resolve) => require(['@/views/' + moduleMap[one.moduleName] + '.vue'], resolve),
-        meta: {
-          title: one.displayName,
-          icon: one.moduleName,
+            children: formattedChildren || [], 
+            // 路由懒加载
+            component: one.parentid === 1 ? Layout : moduleMap[one.moduleName],
+            meta: {
+              title: one.displayName,
+              icon: one.moduleName,
+            }
         }
-      }
 
       result.push(oneRouter);
 	})

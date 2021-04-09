@@ -5,9 +5,14 @@
 			<el-button type="primary" @click="showAddLocation">新建地址</el-button>
 		</el-button-group>
 		<el-table class="place-list" :data="resData" stripe>
-			<el-table-column prop="placeName" label="商场" :min-width="60">
+			<el-table-column prop="placeName" label="商场" :min-width="100">
 			</el-table-column>
-			<el-table-column prop="displayName" label="领取地址" :min-width="60">
+			<el-table-column prop="addressName" label="领取地址" :min-width="150">
+				<template #default="scope">
+					<div>
+						{{ scope.row.addressName || scope.row.displayName }}
+					</div>
+				</template>
 			</el-table-column>
 			<el-table-column prop="addresss" label="是否仅线下领取" :min-width="60">
 				<template #default="scope">
@@ -24,7 +29,7 @@
 					<el-popover
 						style="margin-left: 10px"
 						placement="top"
-						:ref="scope.row.id"
+						v-model:visible="popoverRef[scope.$index]"
 						width="200"
 					>
 						<p>此操作将删除此数据, 是否继续?</p>
@@ -32,7 +37,7 @@
 							<el-button
 								size="mini"
 								type="text"
-								@click="$refs[scope.row.id].doClose()"
+								@click="popoverRef[scope.$index]=false"
 								>取消</el-button
 							>
 							<el-button
@@ -145,7 +150,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref, onMounted, getCurrentInstance } from 'vue'
+import { reactive, toRefs, ref, onMounted, getCurrentInstance, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useStore } from 'vuex'
 import {
@@ -159,18 +164,18 @@ import {
 import SelectPlace from './SelectPlace'
 
 export default {
+	emits: ['changePlaceList'],
 	props: ['list'],
 	components: {
 		SelectPlace,
 	},
-	setup(props) {
+	setup(props, { emit }) {
 		const addPlaceForm = ref(null)
 		const selectPlace = ref(null)
 		const store = useStore()
 		const { proxy } = getCurrentInstance()
 
 		onMounted(() => {
-			console.log(props)
 			state.resData = props.list || []
 		})
 
@@ -200,6 +205,9 @@ export default {
 		const createEditPick = (data) => {
 			activityAddressCreatePick(data).then(res => {
 				console.log(res)
+				if(res.code == proxy.$successCode){
+					emit('changePlaceList', state.resData)
+				}
 			})
 		}
 
@@ -276,10 +284,11 @@ export default {
 
 		//删除地址
 		const handleDelete = (id, index) => {
-			activityAddressDelete(id).then(res => {
+			activityAddressDeletePick(id).then(res => {
 				if(res.code === proxy.$successCode){
 					ElMessage.success('删除成功~')
-					state.resData(index, 1)
+					state.resData.splice(index, 1)
+					state.popoverRef[index] = false
 				}
 			})
 		}
@@ -293,6 +302,10 @@ export default {
 				}
 			}
 		}
+
+		watch(() => props.list, (nval, oval) => {
+            state.resData = nval
+        })
 
 		const state = reactive({
 			resData: [],
@@ -313,6 +326,7 @@ export default {
 				],
 			},
 			btnLoading: false,     //添加商场 btn loading
+			popoverRef: [],
 			showSelectPlace,
 			showAddLocation,
 			handleUpdate,

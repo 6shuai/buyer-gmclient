@@ -73,3 +73,6 @@ export function activityPanicBuyDetail(data) { return get(`/activity/auctionDeta
 //上/下线抢购
 export function activityPanicBuyUpdateState(data) { return put(`/activity/auctionStatus?id=${data.id}&online=${data.online}`); }
 
+//查询机器人列表
+export function activityPanicBuyRobotList(data) { return get(`/activity/robotPlan`, data); }
+

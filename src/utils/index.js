@@ -1,5 +1,13 @@
+const uploadHost = 'http://192.168.1.41:8181';
 //上传路径
-export const uploadUrl = 'http://123.206.83.233:8181/common/upload/';
+// export const uploadUrl = 'http://123.206.83.233:8181/common/upload/';
+export const uploadUrl = uploadHost + '/common/upload';
+
+const ajaxUrl = process.env.NODE_ENV === 'development'
+	? 'http://192.168.1.41:8183/' : `${document.location.origin}/`;   
+
+//导入机器人价格
+export const importRobotPlace = ajaxUrl + 'activity/importRobotPrice?auctionId=12'
 
 /**
  * Parse the time to string

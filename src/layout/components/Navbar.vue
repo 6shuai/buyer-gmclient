@@ -54,7 +54,7 @@ export default {
 		}),
 	},
 	mounted() {
-		console.log(this.$store.state)
+		console.log('state---------->', this.$store.state)
 	},
 	methods: {
 		toggleSideBar() {

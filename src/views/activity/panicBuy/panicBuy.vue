@@ -41,12 +41,12 @@
 						<el-card
 							class="panic-buy-item"
 							v-for="(item, index) in resData"
-							:key="index"
+							:key="item.id"
 							@click.prevent.stop="
 								router.push(
 									item.status == 1 || !item.status
-										? `/activity/panicBuy/edit/${item.id}`
-										: `/activity/panicBuy/detail/${item.id}`
+										? `/activity/panicBuy/${route.params.id}/edit/${item.id}`
+										: `/activity/panicBuy/detail/${route.params.id}-${item.id}`
 								)
 							"
 						>
@@ -114,6 +114,15 @@ export default {
 						displayName,
 						id,
 					}
+
+					auctions.forEach(item => {
+						if(item.status == 3 || item.status == 4){
+							item.online = 1
+						}else{
+							item.online = 2
+						}
+					})
+
 					state.resData = auctions
 				})
 			},

@@ -4,8 +4,6 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import { getToken } from '@/utils/auth' // get token from cookie
 import getPageTitle from '@/utils/get-page-title'
-import { getAuthMenu } from "@/api/user";
-import { filterAsyncRouter } from './store/modules/permission'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
@@ -23,22 +21,19 @@ router.beforeEach(async (to, from, next) => {
 			next({ path: '/' })
 			NProgress.done()
 		}else {
-		// if(!store.state.permission.addRoutes.length){
-		// 	getAuthMenu().then(res => {
-		// 		if(res.code === 0){
-		// // 			// 无访问权限
-		// 			const asyncRouter = filterAsyncRouter(res.obj)
-					const asyncRouter = [];
-		// 			asyncRouter.push({ path: '*', redirect: '/404', hidden: true })
-					store.dispatch('permission/generateRoutes', asyncRouter).then(() => { // 存储路由
-		// 				// router.addRoute(asyncRouter) // 动态添加可访问路由表
-		// 				// next({ ...to, replace: true })// hack方法 确保addRoutes已完成
-					})
-		// 		}
-		// 	})
-		// }else{
-			next()
-		// }
+			if(!store.state.permission.addRoutes.length){
+				const { obj } = await store.dispatch('user/getMenuList')
+
+				const accessRoutes = await store.dispatch('permission/generateRoutes', obj)
+
+				
+				store.dispatch('permission/addRoutes', accessRoutes)
+
+				next({ ...to, replace: true })
+
+			}else{
+				next()
+			}
 		}
 	} else {
 

@@ -8,7 +8,7 @@
 						type="primary"
 						icon="el-icon-plus"
 						size="small"
-						@click=";(addParams = {}), (addLocationDialog = true)"
+						@click="showAddLocation"
 					>
 						添加地址
 					</el-button>
@@ -18,10 +18,10 @@
 			<el-table class="place-list" :data="resData" stripe v-loading="loading">
 				<el-table-column prop="displayName" label="领取地址" :min-width="200">
 				</el-table-column>
-				<el-table-column prop="place" label="所在商场" :min-width="100">
+				<el-table-column prop="placeName" label="所在商场" :min-width="100">
 				</el-table-column>
-				<el-table-column prop="city" label="所在城市" :min-width="150">
-				</el-table-column>
+				<!-- <el-table-column prop="city" label="所在城市" :min-width="150">
+				</el-table-column> -->
 				<el-table-column label="操作" width="130">
 					<template #default="scope">
 						<el-link
@@ -65,50 +65,59 @@
 
 		<!-- 添加领取地址 -->
 		<el-dialog
-			title="添加领取地址"
+			:title="addParams.id ? '编辑领取地址' : '添加领取地址'"
 			width="500px"
 			:close-on-click-modal="false"
 			append-to-body
 			v-model="addLocationDialog"
 		>
-			<el-form 
+			<el-form
 				ref="addLocationForm"
 				:model="addParams"
 				:rules="rules"
-				label-width="100px">
+				label-width="100px"
+			>
 				<el-form-item label="选择城市" prop="city">
-					<el-select
-						v-model="addParams.city"
-						filterable
-						placeholder="请选择城市"
-					>
+					<el-select v-model="cityId" filterable placeholder="请选择城市">
 						<el-option
-							v-for="item in [{ value: 1, label: '北京' }]"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
+							v-for="item in cityData"
+							:key="item.cityNo"
+							:label="item.cityName"
+							:value="item.cityNo"
 						>
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="选择商场" prop="place">
+				<el-form-item label="选择商场" prop="placeId">
 					<el-select
-						v-model="addParams.place"
+						v-model="addParams.placeId"
 						filterable
 						allow-create
 						placeholder="请选择或输入商场"
 					>
 						<el-option
-							v-for="item in [{ value: 1, label: '万达' }]"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
+							v-for="item in placeData"
+							:key="item.id"
+							:label="item.placeName"
+							:value="item.id"
 						>
 						</el-option>
+						<el-pagination
+							class="mt20"
+							background
+							:current-page.sync="placeParams.pageNo"
+							layout="total, prev, pager, next"
+							@current-change="handlePlaceCurrentChange"
+							:total="placeTotalCount"
+						>
+						</el-pagination>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="领取地址" prop="loaction">
-					<el-input placeholder="请输入领取地址"></el-input>
+				<el-form-item label="领取地址" prop="displayName">
+					<el-input
+						placeholder="请输入领取地址"
+						v-model="addParams.displayName"
+					></el-input>
 				</el-form-item>
 			</el-form>
 
@@ -129,8 +138,13 @@
 
 <script>
 import { reactive, toRefs, onMounted, ref } from 'vue'
-import { locationList, locationCreate } from '@/api/location'
 import { ElMessage } from 'element-plus'
+import {
+	activityAddressList,
+	activityAddressCreate,
+	placeCityList,
+	placeList,
+} from '@/api/activity'
 import Pagination from '@/components/Pagination/index'
 
 export default {
@@ -139,18 +153,48 @@ export default {
 	},
 	setup() {
 		onMounted(() => {
-			// init()
+			init()
 		})
 
-		const addLocationForm = ref(null);
+		const addLocationForm = ref(null)
 
 		const init = () => {
 			state.loading = true
-			locationList(state.params).then(res => {
+			activityAddressList(state.params).then(res => {
 				state.loading = false
 				let { list, totalRecords } = res.obj
 				state.resData = list
 				state.totalCount = totalRecords
+			})
+		}
+
+		//显示添加地址窗口
+		const showAddLocation = () => {
+			state.addParams = {}
+			state.addLocationDialog = true
+			if (!state.placeData.length) getPlaceList()
+			if (!state.cityData.length) getCityList()
+		}
+
+		//获取商场列表
+		const getPlaceList = () => {
+			placeList(state.placeParams).then(res => {
+				let { list, totalRecords } = res.obj
+				state.placeData = list
+				state.placeTotalCount = totalRecords
+			})
+		}
+
+		//商场分页
+		const handlePlaceCurrentChange = page => {
+			state.placeParams.pageNo = page
+			getPlaceList()
+		}
+
+		//获取城市列表
+		const getCityList = () => {
+			placeCityList().then(res => {
+				state.cityData = res.obj
 			})
 		}
 
@@ -168,22 +212,26 @@ export default {
 
 		//添加领取地址
 		const handleAddLocation = () => {
-			addLocationForm.value.validate((valid) => {
-				if(valid){
+			addLocationForm.value.validate(valid => {
+				if (valid) {
 					state.btnLoading = true
-					locationCreate(state.addParams).then(res => {
+					activityAddressCreate(state.addParams).then(res => {
 						state.btnLoading = false
-						ElMessage.success('添加成功')
+						ElMessage.success(state.addParams.id ? '编辑成功~' : '添加成功~')
+						state.addLocationDialog = false
+						init()
 					})
 				}
 			})
 		}
-        
-        //编辑领取地址
-        const handleEdit = row => {
-            state.addParams = row;
-            state.addLocationDialog = true;
-        }
+
+		//编辑领取地址
+		const handleEdit = row => {
+			if (!state.placeData.length) getPlaceList()
+			if (!state.cityData.length) getCityList()
+			state.addParams = JSON.parse(JSON.stringify(row))
+			state.addLocationDialog = true
+		}
 
 		const state = reactive({
 			loading: false,
@@ -193,25 +241,32 @@ export default {
 				pageSize: 40,
 			},
 			rules: {
-				city: [
-					{ required: true, message: '请选择城市', trigger: 'blur' },
-				],
-				place: [
+				placeId: [
 					{ required: true, message: '请选择所在商场', trigger: 'blur' },
 				],
-				loaction: [
+				displayName: [
 					{ required: true, message: '请输入领取地址', trigger: 'blur' },
 				],
 			},
 			addLocationForm,
 			addLocationDialog: false,
-			addParams: {}, //添加地址参数
 			resData: [],
 			totalCount: 0,
+			addParams: {}, //添加地址参数
+			cityId: null, //选中的城市id
+			cityData: [], //城市列表
+			placeData: [], //商场列表
+			placeTotalCount: 0, //商场数据总数
+			placeParams: {
+				pageNo: 1,
+				pageSize: 50,
+			},
 			handleSizeChange,
 			handleCurrentChange,
 			handleAddLocation,
-            handleEdit
+			handleEdit,
+			showAddLocation,
+			handlePlaceCurrentChange,
 		})
 
 		return toRefs(state)
