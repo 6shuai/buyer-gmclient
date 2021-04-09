@@ -7,12 +7,17 @@
 				!item.alwaysShow
 			"
 		>
-			<app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path, 'path')">
+			<app-link
+				v-if="onlyOneChild.meta"
+				:to="resolvePath(onlyOneChild.path, 'path')"
+			>
 				<el-menu-item :index="resolvePath(onlyOneChild.name, 'name')">
 					<item
+						v-if="!onlyOneChild.noShowingChildren"
 						:icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
 						:title="onlyOneChild.meta.title"
 					/>
+					<item v-else :title="onlyOneChild.meta.title" />
 				</el-menu-item>
 			</app-link>
 		</template>
@@ -25,10 +30,11 @@
 		>
 			<template #title>
 				<item
-					v-if="item.meta"
+					v-if="item.meta && item.meta.icon && item.meta.icon != 'Home'"
 					:icon="item.meta && item.meta.icon"
 					:title="item.meta.title"
 				/>
+				<item v-else icon="menu-item" :title="item.meta.title" />
 			</template>
 			<sidebar-item
 				v-for="child in item.children"
@@ -96,18 +102,18 @@ export default {
 			return false
 		},
 		resolvePath(routePath, type) {
-			if(type === 'path'){
+			if (type === 'path') {
 				if (isExternal(routePath)) {
-				return routePath
+					return routePath
 				}
 				if (isExternal(this.basePath)) {
-				return this.basePath
+					return this.basePath
 				}
 				return path.resolve(this.basePath, routePath)
-			}else{
+			} else {
 				return routePath
 			}
-		}
+		},
 	},
 }
 </script>
