@@ -31,7 +31,7 @@
 							type="primary"
 							>编辑</el-link
 						>
-						<el-popover placement="top" :width="200">
+						<!-- <el-popover placement="top" :width="200">
 							<p>此操作将删除【{{ scope.row.displayName }}】, 是否继续?</p>
 							<div style="text-align: right; margin: 0">
 								<el-button size="mini" type="text">取消</el-button>
@@ -45,7 +45,7 @@
 							<template #reference>
 								<el-link type="danger" href="javascript:;">删除</el-link>
 							</template>
-						</el-popover>
+						</el-popover> -->
 					</template>
 				</el-table-column>
 			</el-table>
