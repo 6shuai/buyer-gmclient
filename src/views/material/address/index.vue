@@ -139,12 +139,8 @@
 <script>
 import { reactive, toRefs, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import {
-	activityAddressList,
-	activityAddressCreate,
-	placeCityList,
-	placeList,
-} from '@/api/activity'
+import { placeCityList, placeList } from '@/api/activity'
+import { addressList, addressCreate } from '@/api/address'
 import Pagination from '@/components/Pagination/index'
 
 export default {
@@ -160,7 +156,7 @@ export default {
 
 		const init = () => {
 			state.loading = true
-			activityAddressList(state.params).then(res => {
+			addressList(state.params).then(res => {
 				state.loading = false
 				let { list, totalRecords } = res.obj
 				state.resData = list
@@ -215,7 +211,7 @@ export default {
 			addLocationForm.value.validate(valid => {
 				if (valid) {
 					state.btnLoading = true
-					activityAddressCreate(state.addParams).then(res => {
+					addressCreate(state.addParams).then(res => {
 						state.btnLoading = false
 						ElMessage.success(state.addParams.id ? '编辑成功~' : '添加成功~')
 						state.addLocationDialog = false
