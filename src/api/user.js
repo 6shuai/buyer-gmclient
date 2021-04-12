@@ -17,5 +17,8 @@ export function getMemberList(data) { return get('/user/', data); }
 //添加用户
 export function memberCreate(data) { return post('/user/', data); }
 
+//修改密码
+export function memberChangePassword(data) { return put('/user/password', data); }
+
 //获取所有角色   (所在部门)
 export function getRoleList(data) { return get('/role/', data); }

@@ -39,7 +39,7 @@
 						></el-switch>
 					</template>
 				</el-table-column>
-				<el-table-column label="操作" width="130">
+				<el-table-column label="操作" width="90">
 					<template #default="scope">
 						<el-link
 							href="javascript:;"
@@ -48,21 +48,6 @@
 							type="primary"
 							>编辑</el-link
 						>
-						<el-popover placement="top" :width="200">
-							<p>此操作将删除账号【{{ scope.row.displayName }}】, 是否继续?</p>
-							<div style="text-align: right; margin: 0">
-								<el-button size="mini" type="text">取消</el-button>
-								<el-button
-									type="primary"
-									size="mini"
-									@click="handleDeleteBanner(scope.row.id)"
-									>确定</el-button
-								>
-							</div>
-							<template #reference>
-								<el-link type="danger" href="javascript:;">删除</el-link>
-							</template>
-						</el-popover>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -124,7 +109,7 @@
 						v-model="addParams.username"
 					></el-input>
 				</el-form-item>
-				<el-form-item label="密码" prop="password">
+				<el-form-item label="密码" :prop="addParams.id ? '' : 'password'">
 					<el-link
 						type="primary"
 						href="javascript:;"
@@ -178,7 +163,7 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="setPasswordDialog = false">取 消</el-button>
-					<el-button type="primary" :loading="btnLoading" @click="handleSetPw"
+					<el-button type="primary" :loading="pwLoading" @click="handleSetPw"
 						>确 定</el-button
 					>
 				</span>
@@ -190,7 +175,7 @@
 <script>
 import { reactive, ref, toRefs, onMounted, getCurrentInstance } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getMemberList, getRoleList, memberCreate } from '@/api/user'
+import { getMemberList, getRoleList, memberCreate, memberChangePassword } from '@/api/user'
 import Pagination from '@/components/Pagination/index'
 import UploadImg from '@/components/Upload/UploadImg'
 
@@ -268,7 +253,23 @@ export default {
 				...state.addParams,
 				...state.pwParams,
 			}
-			state.setPasswordDialog = false
+			
+			if(state.addParams.id){
+				state.pwLoading = true
+				let data = {
+					id: state.addParams.id,
+					password: state.pwParams.password 
+				}
+				memberChangePassword(data).then(res => {
+					state.pwLoading = false
+					if(res.code === proxy.$successCode){
+						ElMessage.success('修改密码成功~')
+						state.setPasswordDialog = false
+					}
+				})
+			}else{
+				state.setPasswordDialog = false
+			}
 		}
 
 		//添加用户
@@ -317,6 +318,7 @@ export default {
 			resData: [],
 			totalCount: 0,
 			pwParams: {}, //设置密码
+			pwLoading: false,
 			roleData: [], //所在部门列表
 			addMemberForm,
 			handleSizeChange,
