@@ -83,17 +83,19 @@
 			append-to-body
 			v-model="selectVideoDialog"
 		>
-			<ul class="video-wrap" v-loading="videoLoading">
-				<li
-					v-for="item in videoData"
-					@click="selectedVideo(item)"
-					:key="item.id"
-				>
-					<el-image fit="cover" :src="item.image"></el-image>
-					<p class="title overflow">{{ item.displayName }}</p>
-				</li>
-			</ul>
-			<el-empty v-if="!videoData.length" description="暂无视频"></el-empty>
+			<div v-loading="videoLoading">
+				<ul class="video-wrap">
+					<li
+						v-for="item in videoData"
+						@click="selectedVideo(item)"
+						:key="item.id"
+					>
+						<el-image fit="cover" :src="item.image"></el-image>
+						<p class="title overflow">{{ item.displayName }}</p>
+					</li>
+				</ul>
+				<el-empty v-if="!videoData.length" description="暂无视频"></el-empty>
+			</div>
 
 			<template #footer>
 				<span class="dialog-footer">
@@ -108,18 +110,21 @@
 import { reactive, toRefs, computed, watch } from 'vue'
 import { activityGoodsVideoList } from '@/api/activity'
 import { ElMessageBox } from 'element-plus'
+import { useStore } from 'vuex'
 import draggable from 'vuedraggable'
 
 export default {
 	emits: ['changeComponse'],
-	props: ['goodsSkuId', 'list'],
+	props: ['list'],
 	components: {
 		draggable,
 	},
 	setup(props, { emit }) {
+		const store = useStore()
+
 		const getVideoList = () => {
 			state.videoLoading = true
-			activityGoodsVideoList(props.goodsSkuId).then(res => {
+			activityGoodsVideoList(store.state.activity.panicBuyData.goodsSkuId).then(res => {
 				state.videoLoading = false
 				state.videoData = res.obj
 			})
@@ -180,7 +185,6 @@ export default {
 			})
 
 			if (type != 'edit') {
-				console.log('qaq')
 				emit('changeComponse', data)
 			}
 		}

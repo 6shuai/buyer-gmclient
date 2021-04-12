@@ -57,7 +57,7 @@
 									:active-value="1"
 									:inactive-value="2"
 									v-model="item.online"
-									@click.stop="handleChangeOnline(item.id, item.online)"
+									@click.stop="handleChangeOnline(item.id, item.online, index)"
 								></el-switch>
 							</div>
 
@@ -136,12 +136,19 @@ export default {
 			},
 
 			//修改抢购上下线
-			handleChangeOnline(id, online) {
+			handleChangeOnline(id, online, index) {
 				let data = {
 					id,
 					online,
 				}
-				activityPanicBuyUpdateState(data).then(res => {})
+				state.switchLoading = true
+				activityPanicBuyUpdateState(data).then(res => {
+					state.switchLoading = false
+					if(res.code === proxy.$successCode){
+						state.resData[index].statusName = res.obj
+						ElMessage.success('操作成功~')
+					}
+				})
 			},
 
 			//删除抢购
@@ -170,6 +177,7 @@ export default {
 			route,
 			loading: false,
 			showEdit: false, //是否显示编辑活动名称
+			switchLoading: false,
 			activity: {},
 			resData: [],
 			...methods,

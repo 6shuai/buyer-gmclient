@@ -23,7 +23,6 @@
 			<el-form-item label="宣传片排版">
 				<compose 
 					ref="compose" 
-					:goodsSkuId="params.goodsSkuId"
 					:list="params.auctionVideos"
 					@changeComponse="params.auctionVideos=$event"
 				></compose>

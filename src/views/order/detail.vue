@@ -40,15 +40,16 @@
 				<div class="title">支付信息</div>
 				<!-- 支付方式 1表示全款支付；2表示定金支付 -->
 				<el-form-item label="支付方式"> {{ resData.paymentMethod==1 ? '全款支付' : '定金支付' }} </el-form-item>
-				<el-form-item label="抢购价格"> {{ resData.paymentAmount }} </el-form-item>
-				<el-form-item label="优惠金额"> {{ resData.marketValue - resData.paymentAmount }} </el-form-item>
-				<el-form-item label="定金金额"> {{ resData.paymentAmount * (resData.depositRatio / 100) }} </el-form-item>
-				<el-form-item label="尾款金额"> {{ resData.paymentAmount - (resData.paymentAmount * (resData.depositRatio / 100)) }}</el-form-item>
+				<el-form-item label="抢购价格"> {{ resData.totalAmount }} </el-form-item>
+				<el-form-item label="优惠金额"> {{ resData.marketValue - resData.totalAmount }} </el-form-item>
+				<el-form-item label="定金金额"> {{ resData.totalAmount * (resData.depositRatio / 100) }} </el-form-item>
+				<el-form-item label="尾款金额"> {{ resData.totalAmount - (resData.totalAmount * (resData.depositRatio / 100)) }}</el-form-item>
 
 				<div class="title">订单信息</div>
 				<el-form-item label="订单编号"> {{ resData.serialNumber }} </el-form-item>
 				<el-form-item label="创建时间"> {{ resData.creationTime }} </el-form-item>
-				<el-form-item label="付款时间"> {{ resData.paymentTime }} </el-form-item>
+				<el-form-item label="定金付款时间"> {{ resData.depositTime }} </el-form-item>
+				<el-form-item label="付款完成时间"> {{ resData.totalTime }} </el-form-item>
 			</el-form>
 		</el-card>
         
@@ -112,8 +113,7 @@ export default {
     }
 
     .goods-img{
-        min-height: 100px;
-        max-height: 200px;
+        max-width: 500px;
     }
 }
 </style>

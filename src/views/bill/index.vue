@@ -6,11 +6,10 @@
 					<el-form inline label-width="0px">
 						<el-form-item label=" ">
 							<el-input
-                                clearable
 								class="w220"
 								placeholder="请输入商品名称"
 								v-model="params.goodsName"
-								@change="search"
+								@input="search"
 							></el-input>
 						</el-form-item>
 						<el-form-item label=" ">

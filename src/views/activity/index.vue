@@ -14,11 +14,10 @@
 					</el-button>
 
 					<el-input
-						clearable
 						class="w200 ml20"
 						placeholder="输入活动名称搜索"
 						v-model="params.displayName"
-						@change="search"
+						@input="search"
 					></el-input>
 
 					<el-date-picker

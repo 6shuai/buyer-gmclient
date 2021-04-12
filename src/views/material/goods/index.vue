@@ -15,8 +15,9 @@
 
 					<el-input
 						class="w220 ml30"
+						v-model="params.displayName"
 						placeholder="输入商品名称搜索"
-						@change="search"
+						@input="search"
 					></el-input>
 				</div>
 

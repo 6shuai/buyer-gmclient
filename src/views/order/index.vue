@@ -9,7 +9,7 @@
 								class="w220"
 								placeholder="请输入活动名称"
 								v-model="params.activityName"
-								@change="search"
+								@input="search"
 							></el-input>
 						</el-form-item>
 						<el-form-item label=" ">

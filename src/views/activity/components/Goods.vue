@@ -6,21 +6,23 @@
 		:close-on-click-modal="false"
 		append-to-body
 		v-model="selectGoodsDialog"
-	>
-		<div class="activity-goods-list" v-if="resData.length" v-loading="loading">
-			<el-card
-				class="item"
-				v-for="item in resData"
-				:key="item.id"
-				@click="handleSelect(item)"
-			>
-				<div class="goods-image">
-					<el-image fit="cover" :src="item.cover"></el-image>
-				</div>
-				<div class="title overflow">{{ item.displayName }}</div>
-			</el-card>
+	>	
+		<div v-loading="loading">
+			<div class="activity-goods-list" v-if="resData.length">
+				<el-card
+					class="item"
+					v-for="item in resData"
+					:key="item.id"
+					@click="handleSelect(item)"
+				>
+					<div class="goods-image">
+						<el-image fit="cover" :src="item.cover"></el-image>
+					</div>
+					<div class="title overflow">{{ item.displayName }}</div>
+				</el-card>
+			</div>
+			<el-empty v-else description="暂无数据"></el-empty>
 		</div>
-		<el-empty v-else description="暂无数据"></el-empty>
 
 		<el-pagination
 			class="mt20"
