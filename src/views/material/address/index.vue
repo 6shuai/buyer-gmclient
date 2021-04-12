@@ -78,7 +78,12 @@
 				label-width="100px"
 			>
 				<el-form-item label="选择城市" prop="city">
-					<el-select v-model="cityId" filterable placeholder="请选择城市">
+					<el-select 
+						clearable
+						v-model="addParams.cityNo" 
+						filterable 
+						@change="changeSelectCity"
+						placeholder="请选择城市">
 						<el-option
 							v-for="item in cityData"
 							:key="item.cityNo"
@@ -172,6 +177,12 @@ export default {
 			if (!state.cityData.length) getCityList()
 		}
 
+		//选择城市
+		const changeSelectCity = () => {
+			state.placeParams.cityNo = state.addParams.cityNo
+			getPlaceList()
+		}
+
 		//获取商场列表
 		const getPlaceList = () => {
 			placeList(state.placeParams).then(res => {
@@ -263,6 +274,7 @@ export default {
 			handleEdit,
 			showAddLocation,
 			handlePlaceCurrentChange,
+			changeSelectCity
 		})
 
 		return toRefs(state)

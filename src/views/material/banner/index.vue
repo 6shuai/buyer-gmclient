@@ -28,6 +28,14 @@
 						</template>
 					</el-table-column>
 					<el-table-column prop="link" label="跳转" :min-width="150">
+						<template #default="scope">
+							<div v-if="scope.row.jumpType == 1"> 
+								{{ scope.row.link }}
+							</div>
+							<div v-else>
+								{{ scope.row.auctionName }}
+							</div>
+						</template>
 					</el-table-column>
 					<el-table-column label="操作" width="130">
 						<template #default="scope">

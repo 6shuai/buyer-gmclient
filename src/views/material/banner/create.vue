@@ -47,6 +47,14 @@
 								>
 									选择抢购
 								</el-button>
+								<div class="panic-buy-wrap mt10" v-if="addParams.jumpType == 2">
+									<el-card
+										v-if="selectedPanicBuyData.id"
+										class="panic-buy-item banner-select-item"
+									>
+										<panic-buy-list :goodsItem="selectedPanicBuyData"></panic-buy-list>
+									</el-card>
+								</div>
 							</div>
 						</el-form-item>
 						<el-form-item label="">
@@ -71,17 +79,36 @@
 			append-to-body
 			v-model="dialogVisible"
 		>
-			<!-- <div class="panic-buy-wrap mt10" v-if="panicBuyList.length">
-				<el-card
-					class="panic-buy-item banner-select-item"
-					v-for="item in panicBuyList"
-					:key="item"
+			<div v-loading="panicBuyLoading">
+				<div class="panic-buy-wrap mt10" v-if="panicBuyData.length">
+					<el-card
+						class="panic-buy-item banner-select-item"
+						v-for="item in panicBuyData"
+						:key="item"
+					>
+						<el-button
+							class="select-btn"
+							type="primary"
+							plain
+							@click="handleSelectedPanicBuy(item)"
+							>选择</el-button
+						>
+						<panic-buy-list :goodsItem="item"></panic-buy-list>
+					</el-card>
+				</div>
+				<el-empty v-else description="暂无数据"></el-empty>
+				<el-pagination
+					v-if="panicBuyData.length"
+					class="mt20"
+					background
+					:current-page.sync="panicBuyParams.pageNo"
+					:page-size="panicBuyParams.pageSize"
+					layout="total, prev, pager, next"
+					@current-change="handleCurrentChange"
+					:total="totalCount"
 				>
-					<el-button class="select-btn" type="primary" plain>选择</el-button>
-					<panic-buy-list :hideDeleteBtn="true"></panic-buy-list>
-				</el-card>
-			</div> -->
-			<el-empty description="暂无数据"></el-empty>
+				</el-pagination>
+			</div>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="dialogVisible = false">取 消</el-button>
@@ -95,10 +122,11 @@
 </template>
 
 <script>
-import { reactive, toRefs, ref, onMounted, getCurrentInstance } from 'vue'
+import { reactive, toRefs, ref, onMounted, getCurrentInstance, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { bannerCreate, bannerDetail } from '@/api/banner'
+import { bannerCreate, bannerDetail, bannerPanicBuyList } from '@/api/banner'
+import { activityPanicBuyDetail } from '@/api/activity'
 import UploadImg from '@/components/Upload/UploadImg'
 import PanicBuyList from '@/components/PanicBuy/index'
 
@@ -117,6 +145,7 @@ export default {
 			if (route.params.id) {
 				getBannerDetail()
 			}
+			handleCurrentChange()
 		})
 
 		//banner详情
@@ -125,12 +154,49 @@ export default {
 			bannerDetail(route.params.id).then(res => {
 				state.loading = false
 				state.addParams = res.obj
+				if(state.addParams.jumpType == 2){
+					panicBuyDetail(state.addParams.auctionId)
+				}
+			})
+		}
+
+		//获取抢购详情
+		const panicBuyDetail = (auctionId) => {
+			activityPanicBuyDetail(auctionId).then(res => {
+				state.selectedPanicBuyData = res.obj
+			})
+		}
+
+		//抢购列表
+		const getPanicBuyList = () => {
+			state.panicBuyLoading = true
+			bannerPanicBuyList(state.panicBuyParams).then(res => {
+				state.panicBuyLoading = false
+				let { list, totalRecords } = res.obj
+				state.panicBuyData = list
+				state.totalCount = totalRecords
+			})
+		}
+
+		//抢购列表 分页
+		const handleCurrentChange = page => {
+			state.panicBuyParams.pageNo = page
+			getPanicBuyList()
+		}
+
+		//选择抢购
+		const handleSelectedPanicBuy = data => {
+			state.selectedPanicBuyData = {}
+			nextTick(() => {
+				state.selectedPanicBuyData = data
+				state.addParams.auctionId = data.id
+				state.dialogVisible = false
 			})
 		}
 
 		//上传banner成功
-		const uploadBannerSuccess = (url) => {
-			state.addParams.image = url;
+		const uploadBannerSuccess = url => {
+			state.addParams.image = url
 		}
 
 		//添加banner
@@ -142,15 +208,15 @@ export default {
 						return
 					} else if (
 						state.addParams.jumpType == 2 &&
-						!state.addParams.actionsId
+						!state.addParams.auctionId
 					) {
 						ElMessage.warning('请选择抢购~')
 						return
 					}
 					state.btnLoading = true
 					bannerCreate(state.addParams).then(res => {
-						state.btnLoading = false;
-						if(res.code == proxy.$successCode){
+						state.btnLoading = false
+						if (res.code == proxy.$successCode) {
 							ElMessage.success('操作成功~')
 							router.push('/material/banner')
 						}
@@ -164,23 +230,30 @@ export default {
 			btnLoading: false,
 			addBannerForm,
 			addParams: {
-				jumpType: 1
+				jumpType: 1,
 			},
 			addRules: {
 				displayName: [
 					{ required: true, message: '请输入Banner名称', trigger: 'blur' },
 				],
-				image: [
-					{ required: true, message: '请上传背景图片', trigger: 'blur' },
-				],
+				image: [{ required: true, message: '请上传背景图片', trigger: 'blur' }],
 				jumpType: [
 					{ required: true, message: '请选择跳转方式', trigger: 'blur' },
-				]
+				],
 			},
 			dialogVisible: false,
-			panicBuyList: [], //抢购列表
+			panicBuyData: [], //抢购列表
+			selectedPanicBuyData: {},
+			panicBuyLoading: false,
+			panicBuyParams: {
+				pageNo: 1,
+				pageSize: 40,
+			},
+			totalCount: 0,
 			uploadBannerSuccess,
 			handleAddBanner,
+			getPanicBuyList,
+			handleSelectedPanicBuy,
 		})
 
 		return toRefs(state)
