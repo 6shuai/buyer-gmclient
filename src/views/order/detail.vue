@@ -20,7 +20,7 @@
 					<el-image class="goods-img" fit="cover" :src="resData.cover"></el-image>
 				</el-form-item>
 				<el-form-item label="商品规格"> {{ resData.description }} </el-form-item>
-				<el-form-item label="起拍价格"> {{ resData.marketValue }} </el-form-item>
+				<el-form-item label="起拍价格"> {{ resData.marketValue }} 元</el-form-item>
 
 				<div class="title">物流信息</div>
 				<el-form-item label="领取方式"> {{ resData.receiveType==1 ? '线下' : '线上' }} </el-form-item>
@@ -40,10 +40,10 @@
 				<div class="title">支付信息</div>
 				<!-- 支付方式 1表示全款支付；2表示定金支付 -->
 				<el-form-item label="支付方式"> {{ resData.paymentMethod==1 ? '全款支付' : '定金支付' }} </el-form-item>
-				<el-form-item label="抢购价格"> {{ resData.totalAmount }} </el-form-item>
-				<el-form-item label="优惠金额"> {{ resData.marketValue - resData.totalAmount }} </el-form-item>
-				<el-form-item label="定金金额"> {{ resData.totalAmount * (resData.depositRatio / 100) }} </el-form-item>
-				<el-form-item label="尾款金额"> {{ resData.totalAmount - (resData.totalAmount * (resData.depositRatio / 100)) }}</el-form-item>
+				<el-form-item label="抢购价格"> {{ resData.totalAmount || 0 }} 元</el-form-item>
+				<el-form-item label="优惠金额"> {{ (resData.marketValue - resData.totalAmount) || 0 }} 元</el-form-item>
+				<el-form-item label="定金金额"> {{ (resData.totalAmount * (resData.depositRatio / 100)) || 0 }} 元</el-form-item>
+				<el-form-item label="尾款金额"> {{ (resData.totalAmount - (resData.totalAmount * (resData.depositRatio / 100))) || 0 }} 元</el-form-item>
 
 				<div class="title">订单信息</div>
 				<el-form-item label="订单编号"> {{ resData.serialNumber }} </el-form-item>

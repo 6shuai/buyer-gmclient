@@ -50,7 +50,7 @@
 								</el-table-column>
 								<el-table-column label="视频" :min-width="200">
 									<template #default="scope">
-										<ul class="video-list" v-if="scope.row.goodsVideoRelationships">
+										<ul class="video-list">
 											<li
 												class="showUploadVideo"
 												@click="handleShowUploadVideo(scope.$index)"

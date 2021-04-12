@@ -112,6 +112,8 @@ export default {
 				if (res.code == proxy.$successCode) {
 					ElMessage.success('上传成功~')
 					methods.getRobotList()
+				} else{
+					ElMessage.success(res.obj)
 				}
 			},
 

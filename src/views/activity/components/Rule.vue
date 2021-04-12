@@ -73,14 +73,14 @@
 					<el-input-number
 						controls-position="right"
 						v-model="addParams.correctDigit"
-						placeholder="请输入需要猜对的位数"
+						placeholder="请输入猜对的位数"
 					></el-input-number>
 				</el-form-item>
 				<el-form-item label="等级奖励" prop="award">
 					<el-input-number
 						controls-position="right"
 						v-model="addParams.award"
-						placeholder="请输入获得该等级的奖励"
+						placeholder="请输入该等级的奖励"
 					></el-input-number>
 				</el-form-item>
 			</el-form>
