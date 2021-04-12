@@ -113,7 +113,7 @@ export default {
 					ElMessage.success('上传成功~')
 					methods.getRobotList()
 				} else{
-					ElMessage.success(res.obj)
+					ElMessage.error(res.message)
 				}
 			},
 

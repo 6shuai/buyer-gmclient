@@ -20,7 +20,7 @@
 						v-model="scope.row.deliverType"
 						:active-value="2"
 						:inactive-value="1"
-						@change="handleChangeDeliverType(scope.row)"
+						@click="handleChangeDeliverType(scope.row)"
 					></el-switch>
 				</template>
 			</el-table-column>
@@ -187,24 +187,11 @@ export default {
 		//选中的商家
 		const selectedPlaceData = data => {
 			state.resData = state.resData.concat(data)
-
-			let arr = []
-			data.forEach(item => {
-				arr.push({
-					auctionId: store.state.activity.panicBuyData.id,
-					addressId: item.addressId,
-					deliverType: 1
-				})
-			});
-
-			console.log('选中的商家------>', arr)
-			createEditPick(arr)
 		}
 
 		//添加或编辑  商家地址与抢购关联内容
 		const createEditPick = (data) => {
 			activityAddressCreatePick(data).then(res => {
-				console.log(res)
 				if(res.code == proxy.$successCode){
 					emit('changePlaceList', state.resData)
 				}
@@ -221,6 +208,7 @@ export default {
 					deliverType: row.deliverType
 				}
 			]
+			console.log(row)
 			createEditPick(data)
 		}
 
