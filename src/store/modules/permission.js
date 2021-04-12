@@ -9,7 +9,8 @@ const moduleMap = {
   'Member': () => import('@/views/member/index'),
   'Goods': () => import('@/views/material/goods/index'),
   'Banner':() => import('@/views/material/banner/index'),
-  'Address': () => import('@/views/material/address/index')
+  'Address': () => import('@/views/material/address/index'),
+  'Bill': () => import('@/views/bill/index')
 }
 
 /**
@@ -96,7 +97,7 @@ export const filterAsyncRouter = (data) => {
         let oneRouter = {
             path: one.route, 
             name: one.moduleName, 
-            children: formattedChildren || [], 
+            children: formattedChildren || undefined, 
             // 路由懒加载
             component: one.parentid === 1 ? Layout : moduleMap[one.moduleName],
             meta: {
@@ -105,8 +106,10 @@ export const filterAsyncRouter = (data) => {
             }
         }
 
-      result.push(oneRouter);
-	})
+        
+        result.push(oneRouter);
+      })
+      console.log(result)
     return result;
 }
 

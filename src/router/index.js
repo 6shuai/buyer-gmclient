@@ -62,11 +62,11 @@ export const constantRoutes = [
 	//   component: () => import('@/views/login/auth-redirect'),
 	//   hidden: true
 	// },
-	// {
-	//   path: '/404',
-	//   component: () => import('@/views/error-page/404'),
-	//   hidden: true
-	// },
+	{
+	  path: '/:catchAll(.*)',
+	  component: () => import('@/views/error-page/404'),
+	  hidden: true
+	},
 	// {
 	//   path: '/401',
 	//   component: () => import('@/views/error-page/401'),
@@ -218,7 +218,24 @@ export const constantRoutes = [
 	// 	]
 	// }
 
+	// {
+	// 	path: '/',
+	// 	component: Layout,
+	// 	meta: { title: '财务管理', icon: 'user' },
+	// 	name: 'Bill',
+	// 	children: [
+	// 		{
+	// 			path: '/bill',
+	// 			component: () => import('@/views/bill/index'),
+	// 			name: 'Bill',
+	// 			meta: { title: '账单管理', icon: 'Bill' }
+	// 		}
+	// 	]
+	// }
+
 ]
+
+
 
 /**
  * asyncRoutes
@@ -228,7 +245,6 @@ export const asyncRoutes = [
 
 ]
 
-console.log(constantRoutes)
 const router = createRouter({
 	// history: createWebHistory(), // require service support
 	history: createWebHashHistory(),

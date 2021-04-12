@@ -6,9 +6,10 @@
 					<el-form inline label-width="0px">
 						<el-form-item label=" ">
 							<el-input
+                                clearable
 								class="w220"
-								placeholder="请输入活动名称"
-								v-model="params.activityName"
+								placeholder="请输入商品名称"
+								v-model="params.goodsName"
 								@change="search"
 							></el-input>
 						</el-form-item>
@@ -24,63 +25,35 @@
 							>
 							</el-date-picker>
 						</el-form-item>
-						<el-form-item label=" ">
-							<el-select
-								v-model="params.status"
-								clearable
-								placeholder="请选择订单状态"
-								class="w220 mr30"
-								@change="search"
-							>
-								<el-option
-									v-for="item in statusData"
-									:key="item.id"
-									:label="item.displayName"
-									:value="item.id"
-								>
-								</el-option>
-							</el-select>
+                        <el-form-item label=" ">
+							<el-button 
+                                type="primary" 
+                                icon="el-icon-download"
+                                @click="download"
+                            >导出</el-button>
 						</el-form-item>
 					</el-form>
 				</div>
 			</div>
 
 			<el-table class="place-list" :data="resData" stripe v-loading="loading">
-				<el-table-column prop="activityName" label="活动名称" :min-width="200">
+				<el-table-column prop="goodsName" label="商品信息" :min-width="200">
 				</el-table-column>
-				<el-table-column prop="name" label="用户名称" :min-width="100">
+				<el-table-column prop="serialNumber" label="订单号" :min-width="200">
 				</el-table-column>
-				<el-table-column prop="goodsName" label="商品名称" :min-width="150">
+				<el-table-column prop="totalAmount" label="成交金额(元)" :min-width="100">
 				</el-table-column>
-				<el-table-column prop="serialNumber" label="订单号" :min-width="150">
+				<el-table-column prop="serialNumber" label="入账金额(元)" :min-width="100">
+                    <template #default="scope">
+                        <p>小风景: {{ scope.row.xfengjing }}</p>
+                        <p>商户: {{ scope.row.merchant }}</p>
+                    </template>
 				</el-table-column>
-				<el-table-column label="收货信息" :min-width="200">
-					<template #default="scope">
-						<div>
-							{{ scope.row.cityName }}{{ scope.row.areaName
-							}}{{ scope.row.address }}
-						</div>
-					</template>
+                <el-table-column prop="unpaid" label="未付金额(元)" :min-width="100">
 				</el-table-column>
-				<el-table-column prop="statusName" label="订单状态" :min-width="90">
+                <el-table-column prop="statusName" label="订单状态" :min-width="100">
 				</el-table-column>
-				<el-table-column label="操作" width="130">
-					<template #default="scope">
-						<el-link
-							href="javascript:;"
-							class="mr20"
-							type="primary"
-							@click="router.push(`/order/detail/${scope.row.id}`)"
-							>查看详情</el-link
-						>
-						<el-link
-							v-if="scope.row.status==2"
-							href="javascript:;"
-							type="primary"
-							@click="deliverGoods.showDialog(scope.row.id)"
-							>发货</el-link
-						>
-					</template>
+                <el-table-column prop="creationTime" label="下单时间" :min-width="150">
 				</el-table-column>
 			</el-table>
 
@@ -97,34 +70,30 @@
 			</el-pagination>
 		</el-card>
 
-		<!-- 发货 -->
-		<deliver-goods ref="deliverGoods" @deliverGoodsSuccess="init"></deliver-goods>
 	</div>
 </template>
 
 <script>
+import qs from 'qs'
 import { reactive, toRefs, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { orderList, orderStatusList } from '@/api/order'
+import { getBillList } from '@/api/bill'
 import Pagination from '@/components/Pagination/index'
-import DeliverGoods from './components/DeliverGoods'
 
 export default {
 	components: {
 		Pagination,
-		DeliverGoods,
 	},
 	setup() {
 		const deliverGoods = ref(null)
 		onMounted(() => {
 			init()
-			getStatusList()
 		})
 
 		const init = () => {
 			state.loading = true
-			orderList(state.params).then(res => {
+			getBillList(state.params).then(res => {
 				state.loading = false
 				let { list, totalRecords } = res.obj
 				state.resData = list
@@ -156,12 +125,12 @@ export default {
 			init()
 		}
 
-		//获取订单所有状态
-		const getStatusList = () => {
-			orderStatusList().then(res => {
-				state.statusData = res.obj
-			})
-		}
+        //导出
+        const download = () => {
+            window.open(
+				`${document.location.origin}/bill/export?${qs.stringify(state.params)}`
+			);
+        }
 
 		const state = reactive({
 			router: useRouter(),
@@ -173,13 +142,13 @@ export default {
 			resData: [],
 			totalCount: 0,
 			statusData: [],
-			getStatusList,
 			handleSizeChange,
 			handleCurrentChange,
 			deliverGoods,
 			search,
 			datePicker: [],
-			init
+			init,
+            download
 		})
 
 		return toRefs(state)
