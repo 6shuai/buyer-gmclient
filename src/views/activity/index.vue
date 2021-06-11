@@ -164,6 +164,7 @@ export default {
 				state.btnLoading = false
 				ElMessage.success('创建活动成功~')
 				state.addActivityDialog = false
+				router.push(`/activity/panicBuy/${res.obj.id}`)
 			})
 		}
 

@@ -45,44 +45,42 @@
 			</el-form-item>
 
 			<!-- 没选择线下领取商家时  隐藏 -->
-			<div v-if="params.auctionPickUpAddresses && params.auctionPickUpAddresses.length">
-				<el-form-item label="线下支付方式" prop="paymentMethod">
-					<el-radio-group v-model="params.paymentMethod" size="small">
-						<el-radio :label="1">全款支付</el-radio>
-						<el-radio :label="2">支付定金</el-radio>
-					</el-radio-group>
-				</el-form-item>
-				<el-form-item label="定金比例" prop="depositRatio">
-					<el-input-number
-						:min="0"
-						:max="100"
-						:disabled="params.paymentMethod == 1"
-						controls-position="right"
-						v-model="params.depositRatio"
-						placeholder="请输入定金比例"
-					></el-input-number>
-					<span class="units">%</span>
-				</el-form-item>
-				<el-form-item label="尾款收取方" prop="paymentMethod">
-					<el-radio-group
-						:disabled="params.paymentMethod == 1"
-						v-model="params.balancePayee"
-						size="small"
-					>
-						<el-radio :label="0">小风景收取</el-radio>
-						<el-radio :label="1">商户收取</el-radio>
-					</el-radio-group>
-				</el-form-item>
-				<el-form-item label="订单过期时长" prop="orderExpiration">
-					<el-input-number
-						:min="0"
-						controls-position="right"
-						v-model="params.orderExpiration"
-						placeholder="请输入订单过期天数"
-					></el-input-number>
-					<span class="units">天</span>
-				</el-form-item>
-			</div>
+			<el-form-item label="线下支付方式" prop="paymentMethod">
+				<el-radio-group v-model="params.paymentMethod" size="small">
+					<el-radio :label="1">全款支付</el-radio>
+					<el-radio :label="2">支付定金</el-radio>
+				</el-radio-group>
+			</el-form-item>
+			<el-form-item label="定金比例" prop="depositRatio">
+				<el-input-number
+					:min="0"
+					:max="100"
+					:disabled="params.paymentMethod == 1"
+					controls-position="right"
+					v-model="params.depositRatio"
+					placeholder="请输入定金比例"
+				></el-input-number>
+				<span class="units">%</span>
+			</el-form-item>
+			<el-form-item label="尾款收取方" prop="paymentMethod">
+				<el-radio-group
+					:disabled="params.paymentMethod == 1"
+					v-model="params.balancePayee"
+					size="small"
+				>
+					<el-radio :label="0">小风景收取</el-radio>
+					<el-radio :label="1">商户收取</el-radio>
+				</el-radio-group>
+			</el-form-item>
+			<el-form-item label="订单过期时长" prop="orderExpiration">
+				<el-input-number
+					:min="0"
+					controls-position="right"
+					v-model="params.orderExpiration"
+					placeholder="请输入订单过期天数"
+				></el-input-number>
+				<span class="units">天</span>
+			</el-form-item>
 
 			<el-form-item label="竞猜时间" prop="guessTime">
 				<el-input-number
@@ -101,7 +99,7 @@
 </template>
 
 <script>
-import { reactive, ref, toRefs, watch } from 'vue'
+import { reactive, ref, toRefs, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 import Compose from '../Compose'
 import Place from '../Place'
@@ -134,6 +132,10 @@ export default {
 				'YYYY-MM-DD HH:mm:ss'
 			)
 		}
+
+		onMounted(() => {
+			state.params.paymentMethod = state.params.paymentMethod ? state.params.paymentMethod : 1	
+		})
 
 		const state = reactive({
 			refPlace,

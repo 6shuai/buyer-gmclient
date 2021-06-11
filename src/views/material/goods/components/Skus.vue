@@ -20,11 +20,18 @@
                     v-model="addParams.description"
                 ></el-input>
             </el-form-item>
-            <el-form-item label="宣传图片" prop="cover">
+            <el-form-item label="商品图片" prop="cover">
                 <upload-img
                     :isArray="false"
                     :imgList="addParams.cover"
                     @uploadImgPath="uploadImageSuccess"
+                ></upload-img>
+            </el-form-item>
+            <el-form-item label="宣传图片" prop="posters">
+                <upload-img
+                    :isArray="false"
+                    :imgList="addParams.posters"
+                    @uploadImgPath="uploadPostersSuccess"
                 ></upload-img>
             </el-form-item>
         </el-form>
@@ -78,9 +85,15 @@ export default {
             state.addParams.cover = e;
         }
 
+        //宣传图片上传成功
+        const uploadPostersSuccess = (e) => {
+            state.addParams.posters = e;
+        }
+
         const rules = {
             description: [{required: true, message: '请输入属性名称', trigger: 'blur' }],
-            cover: [{required: true, message: '请上传图片', trigger: 'blur' }]
+            cover: [{required: true, message: '请上传图片', trigger: 'blur' }],
+            posters: [{required: true, message: '请上传宣传图片', trigger: 'blur' }]
         }
 
         const state = reactive({
@@ -91,6 +104,7 @@ export default {
             rules,
             handleAddSkus, 
             uploadImageSuccess,
+            uploadPostersSuccess,
         })
 
         return toRefs(state);

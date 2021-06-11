@@ -48,6 +48,16 @@
 										></el-image>
 									</template>
 								</el-table-column>
+								<el-table-column prop="posters" label="宣传图片" :min-width="100">
+									<template #default="scope">
+										<el-image
+											class="goods-attribute-image"
+											fit="contain"
+											:src="scope.row.posters"
+											:preview-src-list="[scope.row.posters]"
+										></el-image>
+									</template>
+								</el-table-column>
 								<el-table-column label="视频" :min-width="200">
 									<template #default="scope">
 										<ul class="video-list">
@@ -110,7 +120,6 @@
 			:title="videoParams.edit ? '编辑视频' : '添加视频'"
 			width="800px"
 			:close-on-click-modal="false"
-			append-to-body
 			v-model="addVideoDialog"
 		>
 			<el-form label-width="160px">
@@ -230,7 +239,8 @@ export default {
 		const handleShowUploadVideo = (skusIndex, data, index) => {
 			// state.videoParams.id = id
 			state.videoParams = {
-				skusIndex
+				skusIndex,
+				url: ''
 			}
 			if(data) {
 				state.videoParams = {
@@ -275,9 +285,7 @@ export default {
 			addParams: {
 				goodsSkus: [], //商品规格属性
 			},
-			videoParams: {
-				url: 'https://quiz.xfengjing.com/video/2021/04/07/dc23b770-f0ff-4697-ba51-cc4be3595367.mp4'
-			}, //添加视频
+			videoParams: {}, //添加视频
 			addRules: {
 				displayName: [
 					{ required: true, message: '请输入属性名称', trigger: 'blur' },

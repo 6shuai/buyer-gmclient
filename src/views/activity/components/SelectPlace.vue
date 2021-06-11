@@ -124,7 +124,7 @@ export default {
 				state.btnLoading = false
 				if(res.code === proxy.$successCode){
 					data.forEach((item, index) => {
-						item = {
+						data[index] = {
 							...item,
 							...res.obj[index]
 						}

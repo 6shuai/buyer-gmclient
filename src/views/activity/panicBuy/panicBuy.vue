@@ -3,7 +3,7 @@
 		<el-card shadow="never">
 			<el-page-header
 				class="mb20"
-				@back="$router.go(-1)"
+				@back="$router.push('/activity')"
 				content="活动详情"
 			></el-page-header>
 

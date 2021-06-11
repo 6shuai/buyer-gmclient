@@ -1,79 +1,7 @@
 <template>
 	<div class="app-main-wrap member-wrap">
 		<el-card>
-			<div shadow="never">
-				<div class="content-top mb20 clearfix">
-					<el-button
-						class="created-btn"
-						type="primary"
-						icon="el-icon-plus"
-						size="small"
-						@click="addParams={enabled: true};addMemberDialog=true"
-					>
-						创建账号
-					</el-button>
-				</div>
-			</div>
-
-			<el-table class="place-list" :data="resData" stripe v-loading="loading">
-				<el-table-column prop="nickname" label="用户昵称" :min-width="120">
-				</el-table-column>
-				<el-table-column prop="username" label="登录账号" :min-width="120">
-				</el-table-column>
-				<el-table-column label="所属部门" :min-width="100">
-					<template #default="scope">
-						<el-tag 
-							size="mini"
-							v-for="item in scope.row.roleId" 
-							:key="item"
-						>{{ findRole(item) }}</el-tag>
-					</template>
-				</el-table-column>
-				<el-table-column prop="enabled" label="状态" width="100">
-					<template #default="scope">
-						<el-switch
-							:active-value="true"
-							:inactive-value="false"
-							v-model="scope.row.enabled"
-							@change="handleChangeState(scope.$index)"
-						></el-switch>
-					</template>
-				</el-table-column>
-				<el-table-column label="操作" width="90">
-					<template #default="scope">
-						<el-link
-							href="javascript:;"
-							@click.stop="handleEdit(scope.row)"
-							class="mr20"
-							type="primary"
-							>编辑</el-link
-						>
-					</template>
-				</el-table-column>
-			</el-table>
-
-			<el-pagination
-				class="mt20"
-				background
-				:current-page.sync="params.pageNo"
-				:page-sizes="[40, 60, 100]"
-				layout="total, prev, pager, next, jumper"
-				@size-change="handleSizeChange"
-				@current-change="handleCurrentChange"
-				:total="totalCount"
-			>
-			</el-pagination>
-		</el-card>
-
-		<!-- 添加员工信息 -->
-		<el-dialog
-			:title="addParams.id ? '编辑用户' : '添加用户'"
-			width="500px"
-			:close-on-click-modal="false"
-			append-to-body
-			v-model="addMemberDialog"
-		>
-			<el-form
+            <el-form
 				ref="addMemberForm"
 				:model="addParams"
 				:rules="addRules"
@@ -121,21 +49,9 @@
 					>
 				</el-form-item>
 			</el-form>
+		</el-card>
 
-			<template #footer>
-				<span class="dialog-footer">
-					<el-button @click="addMemberDialog = false">取 消</el-button>
-					<el-button
-						type="primary"
-						:loading="btnLoading"
-						@click="handleAddMember"
-						>确 定</el-button
-					>
-				</span>
-			</template>
-		</el-dialog>
-
-		<!-- 设置密码 -->
+        <!-- 设置密码 -->
 		<el-dialog
 			title="设置密码"
 			width="500px"
@@ -176,12 +92,10 @@
 import { reactive, ref, toRefs, onMounted, getCurrentInstance } from 'vue'
 import { ElMessage } from 'element-plus'
 import { getMemberList, getRoleList, memberCreate, memberChangePassword } from '@/api/user'
-import Pagination from '@/components/Pagination/index'
 import UploadImg from '@/components/Upload/UploadImg'
 
 export default {
 	components: {
-		Pagination,
 		UploadImg,
 	},
 	setup() {
@@ -195,12 +109,6 @@ export default {
 
 		const init = () => {
 			state.loading = true
-			getMemberList(state.params).then(res => {
-				state.loading = false
-				let { list, totalRecords } = res.obj
-				state.resData = list
-				state.totalCount = totalRecords
-			})
 		}
 
 		const findRole = id => {

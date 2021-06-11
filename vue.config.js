@@ -32,6 +32,7 @@ module.exports = {
   devServer: {
     port: port,
     proxy: 'http://192.168.1.41:8183',
+    // proxy: 'http://123.206.83.233:8183',
 		public: '192.168.137.1:8080',
   },
   configureWebpack: {

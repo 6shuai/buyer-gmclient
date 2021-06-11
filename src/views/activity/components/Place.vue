@@ -208,7 +208,6 @@ export default {
 					deliverType: row.deliverType
 				}
 			]
-			console.log(row)
 			createEditPick(data)
 		}
 
