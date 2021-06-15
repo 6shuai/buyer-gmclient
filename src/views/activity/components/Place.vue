@@ -257,11 +257,8 @@ export default {
 					state.btnLoading = true
 					activityAddressCreate(state.addPlaceParams).then(res => {
 						state.btnLoading = false
-						let { displayName, placeId } = state.addPlaceParams
-						state.resData.push({
-							displayName,
-							placeName: findPlace(placeId)
-						})
+						state.resData.push(res.obj)
+						emit('changePlaceList', state.resData)
 						ElMessage.success('添加成功~')
 						state.dialogVisible = false
 					})

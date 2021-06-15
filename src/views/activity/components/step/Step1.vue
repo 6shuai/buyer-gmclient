@@ -62,7 +62,7 @@
                     :min="0"
                     controls-position="right"
                     v-model="params.priceDeclineFrequency"
-                    placeholder="请输入每隔多久下降一次"
+                    placeholder="每隔多久下降一次"
                 ></el-input-number>
                 <span class="units">秒</span>
             </el-form-item>
