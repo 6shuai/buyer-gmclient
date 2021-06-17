@@ -29,6 +29,7 @@
 			background
 			:current-page.sync="params.pageNo"
 			:page-sizes="[40, 60, 100]"
+			:page-size="params.pageSize"
 			layout="total, prev, pager, next, jumper"
 			@size-change="handleSizeChange"
 			@current-change="handleCurrentChange"

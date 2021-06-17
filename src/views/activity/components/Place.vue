@@ -106,6 +106,7 @@
 							class="mt20"
 							background
 							:current-page.sync="placeParams.pageNo"
+							:page-size="params.pageSize"
 							layout="total, prev, pager, next"
 							@current-change="handleCurrentChange"
 							:total="placeTotalCount"

@@ -55,6 +55,7 @@
 				background
 				:current-page.sync="params.pageNo"
 				:page-sizes="[40, 60, 100]"
+				:page-size="params.pageSize"
 				layout="total, prev, pager, next, jumper"
 				@size-change="handleSizeChange"
 				@current-change="handleCurrentChange"
@@ -111,6 +112,7 @@
 							class="mt20"
 							background
 							:current-page.sync="placeParams.pageNo"
+							:page-size="placeParams.pageSize"
 							layout="total, prev, pager, next"
 							@current-change="handlePlaceCurrentChange"
 							:total="placeTotalCount"
